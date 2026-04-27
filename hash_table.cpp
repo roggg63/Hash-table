@@ -1,6 +1,5 @@
 #include "hash_table.h"
 
-const static int table_size = 503;
 
 uint hash_const_1(const char* word) {
     return 1;
@@ -62,6 +61,20 @@ uint gnu_hash(const char* word) {
     return hash;
 }
 
+uint crc32_hash(const char* word) {
+    uint hash = 0xFFFFFFFF;
+    int len = strlen(word);
+    for (int i = 0; i < len; i++) {
+        hash ^= word[i];
+        for (int bit = 0; bit < 8; bit++) {
+            if (hash & 1)
+                hash = (hash >> 1) ^ 0x04C11DB7;
+            else
+                hash >>= 1;
+        }
+    }
+    return hash;
+}
 
 
 long check_size(FILE* file){
@@ -155,8 +168,11 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     return -1;
 }
 
-void get_info(my_list** table) {
-    FILE* file = fopen("info.txt", "w");
+void get_info(my_list** table, const char* name) {
+    char file_name[256] = "";
+    snprintf(file_name, sizeof(file_name), "info_%s.txt", name);
+
+    FILE* file = fopen(file_name, "w");
 
     for (int i = 1; i < table_size; i++) {
         int size = (table[i] == NULL) ? 0 : list_size(table[i]);
@@ -183,9 +199,11 @@ int main() {
     buffer = save_in_buffer(buffer);
     //printf("%p %s\n", buffer, buffer[10]);
 
-    my_list** table = save_in_table(buffer, hash_ascii_sum);
+    for (int i = 0; i < 8; i++) {
+        my_list** table = save_in_table(buffer, funcs[i].func);
 
-    get_info(table);
+        get_info(table, funcs[i].name);
+    }
 
     //for (int i = 0; i < table_size; i++) {
     //    if (table[i] != NULL) {
