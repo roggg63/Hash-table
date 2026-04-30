@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <nmmintrin.h>
+#include <stdint.h>
 
 #include "list.h"
 

@@ -1,17 +1,23 @@
 #include "table_opt.h"
 
-uint crc32_hash(const char* word) {
-    uint hash = 0xFFFFFFFF;
-    int len = strlen(word);
-    for (int i = 0; i < len; i++) {
-        hash ^= word[i];
-        for (int bit = 0; bit < 8; bit++) {
-            if (hash & 1)
-                hash = (hash >> 1) ^ 0x04C11DB7;
-            else
-                hash >>= 1;
-        }
+uint32_t crc32_hash(const char* word) {
+    uint32_t hash = 0xFFFFFFFF;
+    while (*word) {
+        hash = _mm_crc32_u8(crc, *word);
+        word++;
     }
+
+    //= 0xFFFFFFFF;
+    //int len = strlen(word);
+    //for (int i = 0; i < len; i++) {
+    //    hash ^= word[i];
+    //    for (int bit = 0; bit < 8; bit++) {
+    //        if (hash & 1)
+    //            hash = (hash >> 1) ^ 0x04C11DB7;
+    //        else
+    //            hash >>= 1;
+    //    }
+    //}
     return hash;
 }
 
