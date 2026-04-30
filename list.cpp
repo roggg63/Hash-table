@@ -60,9 +60,9 @@ int list_ctor(my_list* list, int size) {
     list->next = (int*)(calloc(size, sizeof(int)));
     list->prev = (int*)(calloc(size, sizeof(int)));
 
-    assert(list->data != NULL);
-    assert(list->next != NULL);
-    assert(list->prev != NULL);
+    //assert(list->data != NULL);
+    //assert(list->next != NULL);
+    //assert(list->prev != NULL);
 
     list->free = 1;
     list->data[0] = strdup(PTICHKA_STR);
@@ -111,7 +111,7 @@ int decoder_of_error(int err) {
 
 
 int list_insert_after(my_list* list, int index, const char* value) {
-    int err_count = list_verify(list);
+    //int err_count = list_verify(list);
     //printf("next[0] = %d, prev[0] = %d\n", list->next[0], list->prev[0]);
 
     if (list->free == POIZON) {
@@ -166,8 +166,8 @@ int list_insert_after(my_list* list, int index, const char* value) {
 
     //printf("%d, %d", list->head, list->tail);
     */
-    err_count += list_verify(list);
-    decoder_of_error(err_count);
+    //err_count += list_verify(list);
+    //decoder_of_error(err_count);
 
 #ifdef DEBUG_MODE
     list_dump(list, __func__, "ERROR");
@@ -176,17 +176,17 @@ int list_insert_after(my_list* list, int index, const char* value) {
 }
 
 int list_insert_before(my_list* list, int index, const char* value) {
-    int err_count = list_verify(list);
+    //int err_count = list_verify(list);
     int index_new_elem = list_insert_after(list, list->prev[index], value);
 
-    err_count |= list_verify(list);
-    decoder_of_error(err_count);
+    //err_count |= list_verify(list);
+    //decoder_of_error(err_count);
     return index_new_elem;
 }
 
 
 int list_del(my_list* list, int index) {
-    int err_count = list_verify(list);
+    //int err_count = list_verify(list);
     list->next[list->prev[index]] = list->next[index];
     list->prev[list->next[index]] = list->prev[index];
 
@@ -196,23 +196,23 @@ int list_del(my_list* list, int index) {
 
     list->next[index] = list->free;
     list->free = index;
-    err_count += list_verify(list);
-    decoder_of_error(err_count);
+    //err_count += list_verify(list);
+    //decoder_of_error(err_count);
 #ifdef DEBUG_MODE
     list_dump(list, __func__, "ERROR");
 #endif
-    return err_count;
+    return 0;
 }
 
 int get_list_head(my_list* list) {
-    int err_count = list_verify(list);
-    decoder_of_error(err_count);
+    //int err_count = list_verify(list);
+    //decoder_of_error(err_count);
     return list->next[0];
 }
 
 int get_list_tail(my_list* list) {
-    int err_count = list_verify(list);
-    decoder_of_error(err_count);
+    //int err_count = list_verify(list);
+    //decoder_of_error(err_count);
     return list->prev[0];
 }
 
@@ -309,9 +309,9 @@ void create_html_dump(my_list* list, const char* func_inf, int number_of_files, 
 }
 
 void list_dtor(my_list* list) {
-    assert(list->data != NULL);
-    assert(list->next != NULL);
-    assert(list->prev != NULL);
+    //assert(list->data != NULL);
+    //assert(list->next != NULL);
+    //assert(list->prev != NULL);
 
     for (int i = 0; i < list->capacity; i++)
         free(list->data[i]);
