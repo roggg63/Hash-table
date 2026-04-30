@@ -93,7 +93,7 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     my_list* list = table[hash];
 
     if (list == NULL) {
-        printf("no in table\n");
+        //printf("no in table\n");
         return 0;
     }
     else {
