@@ -109,6 +109,16 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     return -1;
 }
 
+int test_for_finding(my_list** table, char** buffer) {
+    int total = 0;
+    int i = 0;
+    while (buffer[i] != NULL) {
+        total += find_in_table(buffer[i], crc32_hash, table);
+        i++;
+    }
+    return total;
+}
+
 void get_info(my_list** table, const char* name) {
     char file_name[256] = "";
     snprintf(file_name, sizeof(file_name), "info_%s.txt", name);
@@ -144,7 +154,7 @@ int main() {
 
     //printf("lf = %lf\n", get_load_factor(table, table_size));
 
-    int total = 0;
+    int total = test_for_finding(table, buffer);
 
     total += find_in_table("coal", crc32_hash, table);
     total += find_in_table("jopa", crc32_hash, table);
