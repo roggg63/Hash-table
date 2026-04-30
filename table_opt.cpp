@@ -2,22 +2,23 @@
 
 uint32_t crc32_hash(const char* word) {
     uint32_t hash = 0xFFFFFFFF;
+    /*
+    int len = strlen(word);
+    for (int i = 0; i < len; i++) {
+        hash ^= word[i];
+        for (int bit = 0; bit < 8; bit++) {
+            if (hash & 1)
+                hash = (hash >> 1) ^ 0x04C11DB7;
+            else
+                hash >>= 1;
+        }
+    }
+    */
     while (*word) {
         hash = _mm_crc32_u8(hash, *word);
         word++;
     }
 
-    //= 0xFFFFFFFF;
-    //int len = strlen(word);
-    //for (int i = 0; i < len; i++) {
-    //    hash ^= word[i];
-    //    for (int bit = 0; bit < 8; bit++) {
-    //        if (hash & 1)
-    //            hash = (hash >> 1) ^ 0x04C11DB7;
-    //        else
-    //            hash >>= 1;
-    //    }
-    //}
     return hash;
 }
 
@@ -104,7 +105,7 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && strcmp(list->data[i], word) == 0) {
+            if (list->data[i] != NULL && word[0] == list->data[i][0] && strcmp(list->data[i], word) == 0) {
                 //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
