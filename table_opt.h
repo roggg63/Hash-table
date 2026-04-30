@@ -10,4 +10,4 @@ typedef unsigned int uint;
 
 const static int table_size = 19997;
 
-uint crc32_hash(const char* word);
+uint32_t crc32_hash(const char* word);
