@@ -3,7 +3,7 @@
 uint32_t crc32_hash(const char* word) {
     uint32_t hash = 0xFFFFFFFF;
     while (*word) {
-        hash = _mm_crc32_u8(crc, *word);
+        hash = _mm_crc32_u8(hash, *word);
         word++;
     }
 
