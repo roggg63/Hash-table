@@ -99,12 +99,12 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     else {
         for (int i = 0; i < list->capacity; i ++) {
             if (list->data[i] != NULL && strcmp(list->data[i], word) == 0) {
-                printf("in table, i = %d, s = %s\n", i, list->data[i]);
+                //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
         }
     }
-    printf("%s not in table\n", word);
+    //printf("%s not in table\n", word);
 
     return -1;
 }
