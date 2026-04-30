@@ -94,7 +94,7 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
 
     if (list == NULL) {
         //printf("no in table\n");
-        return 0;
+        return 2;
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
