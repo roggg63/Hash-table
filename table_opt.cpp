@@ -40,66 +40,23 @@ char** save_in_buffer(char** buffer) {
 
     buffer = (char**) calloc((file_size+2), sizeof(char*));
 
-    char* raw_data = (char*) calloc(file_size+2, sizeof(char));
-    fread(raw_data, 1, file_size, file);
-    raw_data[file_size] = '\0';
-    //word_buffer[word_buffer_size] = '\0';
-    fclose(file);
-
-    char* aligned_area = (char*) aligned_alloc(8, file_size * 8);
-    memset(aligned_area, 0, file_size * 8);
+    char* word_buffer = (char*) calloc(file_size+2, sizeof(char));
+    size_t word_buffer_size = fread(word_buffer, 1, file_size, file);
+    word_buffer[word_buffer_size] = '\0';
 
     int index = 0;
-    char* current_area_ptr = aligned_area;
-    char* token = strtok(raw_data, " \n");
 
-    for (long i = 0; i < file_size+2; i++) {
-        if (token != NULL) {
-            size_t len = strlen(token);
-
-            memcpy(current_area_ptr, token, len);
-
-            buffer[index] = current_area_ptr;
-
-            current_area_ptr += (len + 8) & ~7;
-
-            //word_buffer[i] = '\0';
-            //buffer[index] = word_buffer + i + 1;
+    for (long i = 0; i < file_size; i++) {
+        if (word_buffer[i] == ' ') {
+            word_buffer[i] = '\0';
+            buffer[index] = word_buffer + i + 1;
             index++;
-            token = strtok(NULL, " \n");
         }
     }
-
-    free(raw_data);
 
     return buffer;
 }
 
-int strcmp_fast(const char* s_1, const char* s_2) {
-    const uint64_t* block_1 = (const uint64_t*) s_1;
-    const uint64_t* block_2 = (const uint64_t*) s_2;
-
-    while (1) {
-        uint64_t val_1 = *block_1;
-        uint64_t val_2 = *block_2;
-
-        if (val_1 != val_2) {
-            return 1;
-        }
-
-        const char* bytes = (const char*) block_1;
-        if (bytes[0] == '\0' || bytes[1] == '\0' || bytes[2] == '\0' || bytes[3] == '\0' ||
-            bytes[4] == '\0' || bytes[5] == '\0' || bytes[6] == '\0' || bytes[7] == '\0') {
-            break;
-        }
-
-        block_1++;
-        block_2++;
-    }
-
-    return 0;
-}
-//789411
 my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
     my_list** table = (my_list**) calloc(table_size, sizeof(my_list*));
 
@@ -120,7 +77,7 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
             int word_in_table = 0;
 
             while (current_idx != 0) {
-                if (current_list->data[current_idx] != NULL && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
+                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
                 }
@@ -140,11 +97,6 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
 int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list** table) {
     uint hash = (uint) (hash_func(word) % table_size);
 
-    //alignas(8) char aligned_word[128] = {};
-    //size_t len = strlen(word);
-    //memcpy(aligned_word, word, len);
-
-
     my_list* list = table[hash];
 
     if (list == NULL) {
@@ -153,7 +105,7 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && strcmp(list->data[i], word) == 0) {
+            if (list->data[i] != NULL && word[0] == list->data[i][0] && strcmp(list->data[i], word) == 0) {
                 //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
@@ -211,44 +163,44 @@ int main() {
 
     int total = test_for_finding(table, buffer);
 
-    //total += find_in_table("coal", crc32_hash, table);
-    //total += find_in_table("jopa", crc32_hash, table);
-    //total += find_in_table("a", crc32_hash, table);
-    //total += find_in_table("b", crc32_hash, table);
-    //total += find_in_table("for", crc32_hash, table);
-    //total += find_in_table("hopa", crc32_hash, table);
-    //total += find_in_table("hippo", crc32_hash, table);
-    //total += find_in_table("denis", crc32_hash, table);
-    //total += find_in_table("pork", crc32_hash, table);
-    //total += find_in_table("return", crc32_hash, table);
-    //total += find_in_table("not", crc32_hash, table);
-    //total += find_in_table("wiht", crc32_hash, table);
-    //total += find_in_table("of", crc32_hash, table);
-    //total += find_in_table("at", crc32_hash, table);
-    //total += find_in_table("loh", crc32_hash, table);
-    //total += find_in_table("goga", crc32_hash, table);
-    //total += find_in_table("gym", crc32_hash, table);
-    //total += find_in_table("west", crc32_hash, table);
-    //total += find_in_table("macan", crc32_hash, table);
-    //total += find_in_table("cayenne", crc32_hash, table);
-    //total += find_in_table("beha", crc32_hash, table);
-    //total += find_in_table("merc", crc32_hash, table);
-    //total += find_in_table("sueta", crc32_hash, table);
-    //total += find_in_table("job", crc32_hash, table);
-    //total += find_in_table("labour", crc32_hash, table);
-    //total += find_in_table("gelik", crc32_hash, table);
-    //total += find_in_table("hookah", crc32_hash, table);
-    //total += find_in_table("hop", crc32_hash, table);
-    //total += find_in_table("loop", crc32_hash, table);
-    //total += find_in_table("joke", crc32_hash, table);
-    //total += find_in_table("qwerty", crc32_hash, table);
-    //total += find_in_table("chat", crc32_hash, table);
-    //total += find_in_table("gpt", crc32_hash, table);
-    //total += find_in_table("table", crc32_hash, table);
-    //total += find_in_table("fond", crc32_hash, table);
-    //total += find_in_table("here", crc32_hash, table);
-    //total += find_in_table("door", crc32_hash, table);
-    //total += find_in_table("shark", crc32_hash, table);
+    total += find_in_table("coal", crc32_hash, table);
+    total += find_in_table("jopa", crc32_hash, table);
+    total += find_in_table("a", crc32_hash, table);
+    total += find_in_table("b", crc32_hash, table);
+    total += find_in_table("for", crc32_hash, table);
+    total += find_in_table("hopa", crc32_hash, table);
+    total += find_in_table("hippo", crc32_hash, table);
+    total += find_in_table("denis", crc32_hash, table);
+    total += find_in_table("pork", crc32_hash, table);
+    total += find_in_table("return", crc32_hash, table);
+    total += find_in_table("not", crc32_hash, table);
+    total += find_in_table("wiht", crc32_hash, table);
+    total += find_in_table("of", crc32_hash, table);
+    total += find_in_table("at", crc32_hash, table);
+    total += find_in_table("loh", crc32_hash, table);
+    total += find_in_table("goga", crc32_hash, table);
+    total += find_in_table("gym", crc32_hash, table);
+    total += find_in_table("west", crc32_hash, table);
+    total += find_in_table("macan", crc32_hash, table);
+    total += find_in_table("cayenne", crc32_hash, table);
+    total += find_in_table("beha", crc32_hash, table);
+    total += find_in_table("merc", crc32_hash, table);
+    total += find_in_table("sueta", crc32_hash, table);
+    total += find_in_table("job", crc32_hash, table);
+    total += find_in_table("labour", crc32_hash, table);
+    total += find_in_table("gelik", crc32_hash, table);
+    total += find_in_table("hookah", crc32_hash, table);
+    total += find_in_table("hop", crc32_hash, table);
+    total += find_in_table("loop", crc32_hash, table);
+    total += find_in_table("joke", crc32_hash, table);
+    total += find_in_table("qwerty", crc32_hash, table);
+    total += find_in_table("chat", crc32_hash, table);
+    total += find_in_table("gpt", crc32_hash, table);
+    total += find_in_table("table", crc32_hash, table);
+    total += find_in_table("fond", crc32_hash, table);
+    total += find_in_table("here", crc32_hash, table);
+    total += find_in_table("door", crc32_hash, table);
+    total += find_in_table("shark", crc32_hash, table);
 
     printf("%d\n", total);
 
