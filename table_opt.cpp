@@ -153,7 +153,7 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && word[0] == list->data[i][0] && strcmp_fast(list->data[i], aligned_word) == 0) {
+            if (list->data[i] != NULL && strcmp_fast(list->data[i], aligned_word) == 0) {
                 //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
