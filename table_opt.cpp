@@ -42,6 +42,7 @@ char** save_in_buffer(char** buffer) {
 
     char* raw_data = (char*) calloc(file_size+2, sizeof(char));
     fread(raw_data, 1, file_size, file);
+    raw_data[file_size] = '\0';
     //word_buffer[word_buffer_size] = '\0';
     fclose(file);
 
@@ -159,7 +160,6 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
         }
     }
     //printf("%s not in table\n", word);
-    free(aligned_word);
 
     return -1;
 }
