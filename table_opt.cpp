@@ -60,7 +60,7 @@ char** save_in_buffer(char** buffer) {
 
             buffer[index] = current_area_ptr;
 
-            current_arena_ptr += (len + 8) & ~7;
+            current_area_ptr += (len + 8) & ~7;
 
             //word_buffer[i] = '\0';
             //buffer[index] = word_buffer + i + 1;
