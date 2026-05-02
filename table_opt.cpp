@@ -43,7 +43,7 @@ char** save_in_buffer(char** buffer) {
     char* raw_data = (char*) calloc(file_size+2, sizeof(char));
     fread(raw_data, 1, file_size, file);
     //word_buffer[word_buffer_size] = '\0';
-    fclose(file)
+    fclose(file);
 
     char* aligned_area = (char*) aligned_alloc(8, file_size * 8);
     memset(aligned_area, 0, file_size * 8);
@@ -98,7 +98,7 @@ int strcmp_fast(const char* s_1, const char* s_2) {
 
     return 0;
 }
-
+//789411
 my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
     my_list** table = (my_list**) calloc(table_size, sizeof(my_list*));
 
