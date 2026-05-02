@@ -140,9 +140,9 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
 int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list** table) {
     uint hash = (uint) (hash_func(word) % table_size);
 
-    alignas(8) char aligned_word[128] = {};
-    size_t len = strlen(word);
-    memcpy(aligned_word, word, len);
+    //alignas(8) char aligned_word[128] = {};
+    //size_t len = strlen(word);
+    //memcpy(aligned_word, word, len);
 
 
     my_list* list = table[hash];
@@ -153,7 +153,7 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && strcmp_fast(list->data[i], aligned_word) == 0) {
+            if (list->data[i] != NULL && strcmp_fast(list->data[i], word) == 0) {
                 //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
@@ -211,44 +211,44 @@ int main() {
 
     int total = test_for_finding(table, buffer);
 
-    total += find_in_table("coal", crc32_hash, table);
-    total += find_in_table("jopa", crc32_hash, table);
-    total += find_in_table("a", crc32_hash, table);
-    total += find_in_table("b", crc32_hash, table);
-    total += find_in_table("for", crc32_hash, table);
-    total += find_in_table("hopa", crc32_hash, table);
-    total += find_in_table("hippo", crc32_hash, table);
-    total += find_in_table("denis", crc32_hash, table);
-    total += find_in_table("pork", crc32_hash, table);
-    total += find_in_table("return", crc32_hash, table);
-    total += find_in_table("not", crc32_hash, table);
-    total += find_in_table("wiht", crc32_hash, table);
-    total += find_in_table("of", crc32_hash, table);
-    total += find_in_table("at", crc32_hash, table);
-    total += find_in_table("loh", crc32_hash, table);
-    total += find_in_table("goga", crc32_hash, table);
-    total += find_in_table("gym", crc32_hash, table);
-    total += find_in_table("west", crc32_hash, table);
-    total += find_in_table("macan", crc32_hash, table);
-    total += find_in_table("cayenne", crc32_hash, table);
-    total += find_in_table("beha", crc32_hash, table);
-    total += find_in_table("merc", crc32_hash, table);
-    total += find_in_table("sueta", crc32_hash, table);
-    total += find_in_table("job", crc32_hash, table);
-    total += find_in_table("labour", crc32_hash, table);
-    total += find_in_table("gelik", crc32_hash, table);
-    total += find_in_table("hookah", crc32_hash, table);
-    total += find_in_table("hop", crc32_hash, table);
-    total += find_in_table("loop", crc32_hash, table);
-    total += find_in_table("joke", crc32_hash, table);
-    total += find_in_table("qwerty", crc32_hash, table);
-    total += find_in_table("chat", crc32_hash, table);
-    total += find_in_table("gpt", crc32_hash, table);
-    total += find_in_table("table", crc32_hash, table);
-    total += find_in_table("fond", crc32_hash, table);
-    total += find_in_table("here", crc32_hash, table);
-    total += find_in_table("door", crc32_hash, table);
-    total += find_in_table("shark", crc32_hash, table);
+    //total += find_in_table("coal", crc32_hash, table);
+    //total += find_in_table("jopa", crc32_hash, table);
+    //total += find_in_table("a", crc32_hash, table);
+    //total += find_in_table("b", crc32_hash, table);
+    //total += find_in_table("for", crc32_hash, table);
+    //total += find_in_table("hopa", crc32_hash, table);
+    //total += find_in_table("hippo", crc32_hash, table);
+    //total += find_in_table("denis", crc32_hash, table);
+    //total += find_in_table("pork", crc32_hash, table);
+    //total += find_in_table("return", crc32_hash, table);
+    //total += find_in_table("not", crc32_hash, table);
+    //total += find_in_table("wiht", crc32_hash, table);
+    //total += find_in_table("of", crc32_hash, table);
+    //total += find_in_table("at", crc32_hash, table);
+    //total += find_in_table("loh", crc32_hash, table);
+    //total += find_in_table("goga", crc32_hash, table);
+    //total += find_in_table("gym", crc32_hash, table);
+    //total += find_in_table("west", crc32_hash, table);
+    //total += find_in_table("macan", crc32_hash, table);
+    //total += find_in_table("cayenne", crc32_hash, table);
+    //total += find_in_table("beha", crc32_hash, table);
+    //total += find_in_table("merc", crc32_hash, table);
+    //total += find_in_table("sueta", crc32_hash, table);
+    //total += find_in_table("job", crc32_hash, table);
+    //total += find_in_table("labour", crc32_hash, table);
+    //total += find_in_table("gelik", crc32_hash, table);
+    //total += find_in_table("hookah", crc32_hash, table);
+    //total += find_in_table("hop", crc32_hash, table);
+    //total += find_in_table("loop", crc32_hash, table);
+    //total += find_in_table("joke", crc32_hash, table);
+    //total += find_in_table("qwerty", crc32_hash, table);
+    //total += find_in_table("chat", crc32_hash, table);
+    //total += find_in_table("gpt", crc32_hash, table);
+    //total += find_in_table("table", crc32_hash, table);
+    //total += find_in_table("fond", crc32_hash, table);
+    //total += find_in_table("here", crc32_hash, table);
+    //total += find_in_table("door", crc32_hash, table);
+    //total += find_in_table("shark", crc32_hash, table);
 
     printf("%d\n", total);
 
