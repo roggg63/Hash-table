@@ -40,21 +40,63 @@ char** save_in_buffer(char** buffer) {
 
     buffer = (char**) calloc((file_size+2), sizeof(char*));
 
-    char* word_buffer = (char*) calloc(file_size+2, sizeof(char));
-    size_t word_buffer_size = fread(word_buffer, 1, file_size, file);
-    word_buffer[word_buffer_size] = '\0';
+    char* raw_data = (char*) calloc(file_size+2, sizeof(char));
+    fread(raw_data, 1, file_size, file);
+    //word_buffer[word_buffer_size] = '\0';
+    fclose(file)
+
+    char* aligned_area = (char*) aligned_alloc(8, file_size * 8);
+    memset(aligned_area, 0, file_size * 8);
 
     int index = 0;
+    char* current_area_ptr = aligned_area;
+    char* token = strtok(raw_data, " \n");
 
-    for (long i = 0; i < file_size; i++) {
-        if (word_buffer[i] == ' ') {
-            word_buffer[i] = '\0';
-            buffer[index] = word_buffer + i + 1;
+    for (long i = 0; i < file_size+2; i++) {
+        if (token != NULL) {
+            size_t len = strlen(token);
+
+            memcpy(current_area_ptr, token, len);
+
+            buffer[index] = current_arena_ptr;
+
+            current_arena_ptr += (len + 8) & ~7;
+
+            //word_buffer[i] = '\0';
+            //buffer[index] = word_buffer + i + 1;
             index++;
+            token = strtok(NULL, " \n");
         }
     }
 
+    free(raw_data);
+
     return buffer;
+}
+
+int strcmp_fast(const char* s_1, const char* s_2) {
+    const uint64_t* block_1 = (const uint64_t*) s_1;
+    const uint64_t* block_2 = (const uint64_t*) s_2;
+
+    while (1) {
+        uint64_t val_1 = *block_1;
+        uint64_t val_2 = *block_2;
+
+        if (val_1 != val_2) {
+            return 1;
+        }
+
+        const char* bytes = (const char*) block_1;
+        if (bytes[0] == '\0' || bytes[1] == '\0' || bytes[2] == '\0' || bytes[3] == '\0' ||
+            bytes[4] == '\0' || bytes[5] == '\0' || bytes[6] == '\0' || bytes[7] == '\0') {
+            break;
+        }
+
+        block_1++;
+        block_2++;
+    }
+
+    return 0;
 }
 
 my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {

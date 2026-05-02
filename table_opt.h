@@ -3,6 +3,7 @@
 #include <string.h>
 #include <nmmintrin.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "list.h"
 
