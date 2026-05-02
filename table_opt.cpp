@@ -58,7 +58,7 @@ char** save_in_buffer(char** buffer) {
 
             memcpy(current_area_ptr, token, len);
 
-            buffer[index] = current_arena_ptr;
+            buffer[index] = current_area_ptr;
 
             current_arena_ptr += (len + 8) & ~7;
 
