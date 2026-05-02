@@ -119,7 +119,7 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
             int word_in_table = 0;
 
             while (current_idx != 0) {
-                if (current_list->data[current_idx] != NULL && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
+                if (current_list->data[current_idx] != NULL && strcmp_fast(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
                 }
@@ -139,6 +139,11 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
 int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list** table) {
     uint hash = (uint) (hash_func(word) % table_size);
 
+    alignas(8) char aligned_word[128] = {};
+    size_t len = strlen(word);
+    memcpy(aligned_word, word, len);
+
+
     my_list* list = table[hash];
 
     if (list == NULL) {
@@ -147,13 +152,14 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && word[0] == list->data[i][0] && strcmp(list->data[i], word) == 0) {
+            if (list->data[i] != NULL && word[0] == list->data[i][0] && strcmp_fast(list->data[i], aligned_word) == 0) {
                 //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
         }
     }
     //printf("%s not in table\n", word);
+    free(aligned_word);
 
     return -1;
 }
