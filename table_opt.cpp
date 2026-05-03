@@ -59,6 +59,8 @@ char** save_in_buffer(char** buffer) {
     fread(raw_data, 1, file_size, file);
     fclose(file);
 
+    long word_count = file_size / 32;
+
     buffer = (char**)calloc(word_count + 1, sizeof(char*));
 
     for (long i = 0; i < word_count; i++) {
@@ -89,7 +91,7 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
             int word_in_table = 0;
 
             while (current_idx != 0) {
-                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
+                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp_fast_32(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
                 }
@@ -111,13 +113,16 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
 
     my_list* list = table[hash];
 
+    alignas(8) char word32[32] = {};
+    make_32byte_word(word32, word);
+
     if (list == NULL) {
         //printf("no in table\n");
         return 2;
     }
     else {
         for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && word[0] == list->data[i][0] && strcmp(list->data[i], word) == 0) {
+            if (list->data[i] != NULL && word32[0] == list->data[i][0] && strcmp_fast_32(list->data[i], word32) == 0) {
                 //printf("in table, i = %d, s = %s\n", i, list->data[i]);
                 return 1;
             }
