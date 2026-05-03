@@ -67,7 +67,7 @@ char** save_in_buffer(char** buffer) {
         buffer[i] = raw_data + i * 32;
     }
     buffer[word_count] = NULL;
-    free(raw_data);
+    //free(raw_data);
 
     return buffer;
 }
@@ -91,7 +91,7 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
             int current_idx = current_list->next[0];
             int word_in_table = 0;
 
-            while (current_idx != 0) {
+            while (current_idx != POIZON) {
                 if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp_fast_32(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
