@@ -175,6 +175,7 @@ int main() {
     my_list** table = save_in_table(buffer, crc32_hash);
 
     //printf("lf = %lf\n", get_load_factor(table, table_size));
+    printf("111\n");
 
     int total = test_for_finding(table, buffer);
 
