@@ -14,9 +14,8 @@ uint32_t crc32_hash(const char* word) {
         }
     }
     */
-    while (*word) {
-        hash = _mm_crc32_u8(hash, *word);
-        word++;
+    for (int i = 0; i < 32 && word[i] != '\0'; i++) {
+        hash = _mm_crc32_u8(hash, word[i]);
     }
 
     return hash;
@@ -121,11 +120,12 @@ int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list*
         return 2;
     }
     else {
-        for (int i = 0; i < list->capacity; i ++) {
-            if (list->data[i] != NULL && word32[0] == list->data[i][0] && strcmp_fast_32(list->data[i], word32) == 0) {
-                //printf("in table, i = %d, s = %s\n", i, list->data[i]);
+        int current_idx = list->next[0];
+        while (current_idx != 0) {
+            if (list->data[current_idx] != NULL && word32[0] == list->data[current_idx][0] && strcmp_fast_32(list->data[current_idx], word32) == 0) {
                 return 1;
             }
+            current_idx = list->next[current_idx];
         }
     }
     //printf("%s not in table\n", word);
