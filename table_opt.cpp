@@ -68,7 +68,7 @@ char** save_in_buffer(char** buffer) {
     }
     buffer[word_count] = NULL;
     //free(raw_data);
-
+    printf("111\n");
     return buffer;
 }
 
@@ -106,6 +106,7 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
         }
         i++;
     }
+    printf("222\n");
     return table;
 }
 
@@ -175,7 +176,6 @@ int main() {
     my_list** table = save_in_table(buffer, crc32_hash);
 
     //printf("lf = %lf\n", get_load_factor(table, table_size));
-    printf("111\n");
 
     int total = test_for_finding(table, buffer);
 
