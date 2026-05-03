@@ -22,6 +22,24 @@ uint32_t crc32_hash(const char* word) {
     return hash;
 }
 
+int strcmp_fast_32(const char* string_1, const char* string_2) {
+    const uint64_t* block_1 = (const uint64_t*) string_1;
+    const uint64_t* block_2 = (const uint64_t*) string_2;
+
+    for (int i = 0; i < 4; i++) {
+        if (block_1[i] != block_2[i])
+            return (block_1[i] < block_2[i]) ? -1 : 1;
+    }
+    return 0;
+}
+
+void make_32byte_word(char* dest, const char* string) {
+    size_t len = strlen(string);
+
+    memcpy(dest, string, len);
+    memset(dest + len, 0, 32 - len);
+}
+
 
 long check_size(FILE* file){
     fseek(file, 0, SEEK_END);
@@ -31,28 +49,22 @@ long check_size(FILE* file){
 }
 
 char** save_in_buffer(char** buffer) {
-    FILE *file = fopen("data.txt", "r");
+    FILE *file = fopen("normalized_data.bin", "rb");
     if(file == NULL) {
         printf("ошибка открытия файла\n");
-
     }
     long file_size = check_size(file);
 
-    buffer = (char**) calloc((file_size+2), sizeof(char*));
+    char* raw_data = (char*)aligned_alloc(32, file_size);
+    fread(raw_data, 1, file_size, file);
+    fclose(file);
 
-    char* word_buffer = (char*) calloc(file_size+2, sizeof(char));
-    size_t word_buffer_size = fread(word_buffer, 1, file_size, file);
-    word_buffer[word_buffer_size] = '\0';
+    buffer = (char**)calloc(word_count + 1, sizeof(char*));
 
-    int index = 0;
-
-    for (long i = 0; i < file_size; i++) {
-        if (word_buffer[i] == ' ') {
-            word_buffer[i] = '\0';
-            buffer[index] = word_buffer + i + 1;
-            index++;
-        }
+    for (long i = 0; i < word_count; i++) {
+        buffer[i] = raw_data + i * 32;
     }
+    buffer[word_count] = NULL;
 
     return buffer;
 }
