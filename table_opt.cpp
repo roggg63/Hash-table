@@ -72,7 +72,7 @@ char** save_in_buffer(char** buffer) {
     return buffer;
 }
 
-my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
+my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
     my_list** table = (my_list**) calloc(table_size, sizeof(my_list*));
 
     int i = 0;
@@ -109,7 +109,7 @@ my_list** save_in_table(char** buffer, uint(*hash_func)(const char* word)) {
     return table;
 }
 
-int find_in_table(const char* word, uint(*hash_func)(const char* word), my_list** table) {
+int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_list** table) {
     uint hash = (uint) (hash_func(word) % table_size);
 
     my_list* list = table[hash];
