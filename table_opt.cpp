@@ -44,7 +44,7 @@ char** save_in_buffer(char** buffer) {
     }
     long file_size = check_size(file);
 
-    char* raw_data = (char*)aligned_alloc(32, file_size);
+    char* raw_data = (char*)calloc(sizeof(char), file_size);
     fread(raw_data, 1, file_size, file);
     fclose(file);
 
