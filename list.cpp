@@ -121,11 +121,11 @@ int list_insert_after(my_list* list, int index, const char* value) {
         }
     }
 
-    char new_word[32] = {};
+    char* new_data = (char*)calloc(32, sizeof(char));
     int index_new_elem = list->free;
     list->free = list->next[index_new_elem];
-    memcpy(new_word, value, strlen(value));
-    list->data[index_new_elem] = new_word;//strdup(value);
+    memcpy(new_data, value, strlen(value));
+    list->data[index_new_elem] = new_data;//strdup(value);
 
     list->next[index_new_elem] = list->next[index];
     list->prev[index_new_elem] = index;
