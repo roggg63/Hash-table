@@ -22,17 +22,6 @@ uint32_t crc32_hash(const char* word) {
     return hash;
 }
 
-int strcmp_fast_32(const char* string_1, const char* string_2) {
-    const uint64_t* block_1 = (const uint64_t*) string_1;
-    const uint64_t* block_2 = (const uint64_t*) string_2;
-
-    for (int i = 0; i < 4; i++) {
-        if (block_1[i] != block_2[i])
-            return (block_1[i] < block_2[i]) ? -1 : 1;
-    }
-    return 0;
-}
-
 void make_32byte_word(char* dest, const char* string) {
     size_t len = strlen(string);
 
@@ -79,7 +68,7 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
 
     while (buffer[i] != NULL) {
         //printf("111\n");
-        uint hash_res = (uint) (hash_func(buffer[i]) % table_size);
+        uint32_t hash_res = (uint32_t) (hash_func(buffer[i]) % table_size);
         if (table[hash_res] == NULL) {
             my_list* new_list = (my_list*)calloc(1, sizeof(my_list));
             list_ctor(new_list, 5);
@@ -91,8 +80,8 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
             int current_idx = current_list->next[0];
             int word_in_table = 0;
 
-            while (current_idx != POIZON) {
-                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp_fast_32(current_list->data[current_idx], buffer[i]) == 0) {
+            while (current_idx != 0) {
+                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && my_strcmp(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
                 }
@@ -124,7 +113,7 @@ int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_l
     int current_idx = list->next[0];
 
     while (current_idx != POIZON) {
-        if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && strcmp_fast_32(list->data[current_idx], word) == 0) {
+        if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && my_strcmp(list->data[current_idx], word) == 0) {
             return 1;
         }
         current_idx = list->next[current_idx];
