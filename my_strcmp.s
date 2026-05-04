@@ -1,6 +1,6 @@
 .intel_syntax noprefix
 
-section .text
+.text
 .globl my_strcmp
 
 my_strcmp:
