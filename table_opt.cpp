@@ -114,7 +114,7 @@ int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_l
 
     while (current_idx != 0) {
         if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && my_strcmp(list->data[current_idx], word) == 0) {
-            printf("111\n");s
+            printf("111\n");
             return 1;
         }
         current_idx = list->next[current_idx];
