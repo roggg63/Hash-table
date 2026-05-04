@@ -80,7 +80,7 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
             int current_idx = current_list->next[0];
             int word_in_table = 0;
 
-            while (current_idx != POIZON) {
+            while (current_idx != 0) {
                 if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
@@ -112,7 +112,7 @@ int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_l
     }
     int current_idx = list->next[0];
 
-    while (current_idx != 0) {
+    while (current_idx != POIZON) {
         if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && strcmp(list->data[current_idx], word) == 0) {
             return 1;
         }
