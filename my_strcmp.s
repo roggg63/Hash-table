@@ -1,12 +1,7 @@
-default rel
-buffer_len equ 32
-
-section .bss
-string_1 resb buffer_len
-string_2 resb buffer_len
+.intel_syntax noprefix
 
 section .text
-global my_strcmp
+.globl my_strcmp
 
 my_strcmp:
     push rbx
