@@ -80,8 +80,7 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
             int current_idx = current_list->next[0];
             int word_in_table = 0;
 
-            while (current_idx != 0) {
-                printf("111\n");
+            while (current_idx != POIZON) {
                 if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
