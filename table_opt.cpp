@@ -98,6 +98,11 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
     return table;
 }
 
+void table_dtor(my_list** table,  char** buffer) {
+    free(table);
+    free(buffer);
+}
+
 int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_list** table) {
     uint hash = (uint) (hash_func(word) % table_size);
 
@@ -124,10 +129,57 @@ int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_l
 int test_for_finding(my_list** table, char** buffer) {
     int total = 0;
     int i = 0;
-    while (buffer[i] != NULL) {
-        total += find_in_table(buffer[i], crc32_hash, table);
-        i++;
-    }
+    asm volatile (
+        ".intel_syntax noprefix;"
+
+        "push rbx;"
+        "push r12;"
+        "push r13;"
+        "push r14;"
+        "push r15;"
+
+        "xor  r12d, r12d;" //i
+        "xor ebx, ebx" //total
+
+        "mov  r13, %[buffer];"
+        "mov  r14, %[table];"
+        "mov  r15, %[crc32_hash];"
+
+        ".Lcontinue:"
+        "mov rax, [r13+r12*8];" //buffer[i]
+        "cmp rax, 0;"           // != NULL
+        "je .Lend"
+
+        "mov rdi, rax;"         //rdi -> buffer[i]
+        "mov rsi, r15;"         //rsi -> crc32_hash
+        "mov rdx, r14;"         //rdx -> table
+        "call find_in_table;"   //res -> eax
+
+        "add ebx, eax;"         //total += res
+        "inc r12d;"             //i++
+        "jmp .Lcontinue;"
+
+        ".Lend:"
+
+        "mov [%total], ebx;"    //total from ebx saving
+
+        "pop r15;"
+        "pop r14;"
+        "pop r13;"
+        "pop r12;"
+        "pop rbx;"
+
+        ".att_syntax prefix;"
+        : [total] "=m" (total)
+        : [table] "r" (table),
+          [buffer] "r" (buffer),
+          [crc32_hash] "r" (crc32_hash)
+        :"rax", "rdi", "rsi", "rdx", "memory"
+    );
+    //while (buffer[i] != NULL) {
+    //    total += find_in_table(buffer[i], crc32_hash, table);
+    //    i++;
+    //}
     return total;
 }
 
@@ -208,6 +260,8 @@ int main() {
     //total += find_in_table("shark", crc32_hash, table);
 
     printf("%d\n", total);
+
+    table_dtor(table, buffer);
 
     return 0;
 }
