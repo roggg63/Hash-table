@@ -14,4 +14,4 @@ const static int table_size = 19997;
 uint32_t crc32_hash(const char* word);
 
 extern "C" int my_strcmp(const char* string_1, const char* string_2);
-extern "C" int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_list** table);
+extern "C" int find_in_table(const char* word, my_list** table);
