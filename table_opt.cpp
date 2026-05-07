@@ -14,8 +14,8 @@ uint32_t crc32_hash(const char* word) {
         }
     }
     */
-    while (*word) {
-        hash = _mm_crc32_u32(hash, *word);
+    for (int j = 0; j < 4; j++) {
+        hash = _mm_crc32_u64(hash, *(const uint64_t*)word);
         word += 8;
     }
 
@@ -107,7 +107,7 @@ extern "C" int find_in_table(const char* word, my_list** table) {
     char first_letter = word[0];
     uint32_t hash = 0xFFFFFFFF;
     for (int j = 0; j < 4; j++) {
-        hash = _mm_crc32_u64(hash, *word);
+        hash = _mm_crc32_u64(hash, *(const uint64_t*)word);
         word += 8;
     }
     hash = hash % table_size;
