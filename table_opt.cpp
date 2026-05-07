@@ -103,7 +103,7 @@ void table_dtor(my_list** table,  char** buffer) {
     free(buffer);
 }
 
-int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_list** table) {
+extern "C" int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_list** table) {
     uint hash = (uint) (hash_func(word) % table_size);
 
     my_list* list = table[hash];
