@@ -161,7 +161,7 @@ int test_for_finding(my_list** table, char** buffer) {
 
         ".Lend:"
 
-        "mov [%total], ebx;"    //total from ebx saving
+        "mov [%[total]], ebx;"    //total from ebx saving
 
         "pop r15;"
         "pop r14;"
