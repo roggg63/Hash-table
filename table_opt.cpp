@@ -104,6 +104,7 @@ void table_dtor(my_list** table,  char** buffer) {
 }
 
 extern "C" int find_in_table(const char* word, my_list** table) {
+    char first_letter = word[0];
     uint32_t hash = 0xFFFFFFFF;
     for (int j = 0; j < 4; j++) {
         hash = _mm_crc32_u64(hash, *word);
@@ -120,7 +121,7 @@ extern "C" int find_in_table(const char* word, my_list** table) {
     int current_idx = list->next[0];
 
     while (current_idx != POIZON) {
-        if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && my_strcmp(list->data[current_idx], word) == 0) {
+        if (list->data[current_idx] != NULL && first_letter == list->data[current_idx][0] && my_strcmp(list->data[current_idx], word-32) == 0) {
             return 1;
         }
         current_idx = list->next[current_idx];
