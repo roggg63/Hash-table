@@ -128,7 +128,6 @@ int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_l
 
 int test_for_finding(my_list** table, char** buffer) {
     int total = 0;
-    int i = 0;
     asm volatile (
         ".intel_syntax noprefix;"
 
@@ -161,7 +160,7 @@ int test_for_finding(my_list** table, char** buffer) {
 
         ".Lend:"
 
-        "mov [%[total]], ebx;"    //total from ebx saving
+        "mov eax, ebx;"    //total from ebx saving
 
         "pop r15;"
         "pop r14;"
@@ -170,11 +169,11 @@ int test_for_finding(my_list** table, char** buffer) {
         "pop rbx;"
 
         ".att_syntax prefix;"
-        : [total] "=m" (total)
+        : [total] "=a" (total)
         : [table] "r" (table),
           [buffer] "r" (buffer),
           [crc32_hash] "r" (crc32_hash)
-        :"rax", "rdi", "rsi", "rdx", "memory"
+        :"rax", "rdi", "rsi", "rdx", "memory", "rcx"
     );
     //while (buffer[i] != NULL) {
     //    total += find_in_table(buffer[i], crc32_hash, table);
