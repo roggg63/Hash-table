@@ -131,27 +131,21 @@ int test_for_finding(my_list** table, char** buffer) {
     asm volatile (
         ".intel_syntax noprefix;"
 
-        "push rbx;"
-        "push r12;"
-        "push r13;"
-        "push r14;"
-        "push r15;"
-
         "xor  r12d, r12d;" //i
-        "xor ebx, ebx" //total
+        "xor ebx, ebx;" //total
 
-        "mov  r13, %[buffer];"
-        "mov  r14, %[table];"
-        "mov  r15, %[crc32_hash];"
+        //"mov  r13, ;"
+        //"mov  r14, ;"
+        //"mov  r15, %[crc32_hash];"
 
         ".Lcontinue:"
-        "mov rax, [r13+r12*8];" //buffer[i]
+        "mov rax, [%[buffer]+r12*8];" //buffer[i]
         "cmp rax, 0;"           // != NULL
         "je .Lend"
 
         "mov rdi, rax;"         //rdi -> buffer[i]
-        "mov rsi, r15;"         //rsi -> crc32_hash
-        "mov rdx, r14;"         //rdx -> table
+        "mov rsi, %[crc32_hash];"         //rsi -> crc32_hash
+        "mov rdx, %[table];"         //rdx -> table
         "call find_in_table;"   //res -> eax
 
         "add ebx, eax;"         //total += res
@@ -160,20 +154,14 @@ int test_for_finding(my_list** table, char** buffer) {
 
         ".Lend:"
 
-        "mov eax, ebx;"    //total from ebx saving
-
-        "pop r15;"
-        "pop r14;"
-        "pop r13;"
-        "pop r12;"
-        "pop rbx;"
+        "mov %[total], ebx;"    //total from ebx saving
 
         ".att_syntax prefix;"
-        : [total] "=a" (total)
+        : [total] "=r" (total)
         : [table] "r" (table),
           [buffer] "r" (buffer),
           [crc32_hash] "r" (crc32_hash)
-        :"rdi", "rsi", "rdx", "memory", "rcx"
+        :"rax", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10", "r11", "rbx", "r12", "memory"
     );
     //while (buffer[i] != NULL) {
     //    total += find_in_table(buffer[i], crc32_hash, table);
