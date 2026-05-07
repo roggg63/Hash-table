@@ -134,10 +134,6 @@ int test_for_finding(my_list** table, char** buffer) {
         "xor  r12d, r12d\n" //i
         "xor ebx, ebx\n" //total
 
-        //"mov  r13, ;"
-        //"mov  r14, ;"
-        //"mov  r15, %[crc32_hash];"
-
         "1:\n"
         "mov rax, [%q[buffer]+r12*8]\n" //buffer[i]
         "cmp rax, 0\n"           // != NULL
@@ -248,7 +244,7 @@ int main() {
 
     printf("%d\n", total);
 
-    table_dtor(table, buffer);
+    //table_dtor(table, buffer);
 
     return 0;
 }
