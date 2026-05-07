@@ -1,8 +1,19 @@
-#include "table_opt.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stddef.h>
+
+#include "list.h"
+
+typedef unsigned int uint;
+
+const static int table_size = 19997;
+
+uint32_t crc32_hash(const char* word);
 
 uint32_t crc32_hash(const char* word) {
     uint32_t hash = 0xFFFFFFFF;
-    /*
     int len = strlen(word);
     for (int i = 0; i < len; i++) {
         hash ^= word[i];
@@ -13,11 +24,7 @@ uint32_t crc32_hash(const char* word) {
                 hash >>= 1;
         }
     }
-    */
-    while (*word) {
-        hash = _mm_crc32_u32(hash, *word);
-        word += 8;
-    }
+
 
     return hash;
 }
@@ -81,7 +88,7 @@ my_list** save_in_table(char** buffer, uint32_t(*hash_func)(const char* word)) {
             int word_in_table = 0;
 
             while (current_idx != 0) {
-                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && my_strcmp(current_list->data[current_idx], buffer[i]) == 0) {
+                if (current_list->data[current_idx] != NULL && current_list->data[current_idx][0] == buffer[i][0] && strcmp(current_list->data[current_idx], buffer[i]) == 0) {
                     word_in_table = 1;
                     break;
                 }
@@ -118,7 +125,7 @@ extern "C" int find_in_table(const char* word, uint32_t(*hash_func)(const char* 
     int current_idx = list->next[0];
 
     while (current_idx != POIZON) {
-        if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && my_strcmp(list->data[current_idx], word) == 0) {
+        if (list->data[current_idx] != NULL && word[0] == list->data[current_idx][0] && strcmp(list->data[current_idx], word) == 0) {
             return 1;
         }
         current_idx = list->next[current_idx];
@@ -128,41 +135,11 @@ extern "C" int find_in_table(const char* word, uint32_t(*hash_func)(const char* 
 
 int test_for_finding(my_list** table, char** buffer) {
     int total = 0;
-    asm volatile (
-        ".intel_syntax noprefix\n"
-
-        "xor  r12d, r12d\n" //i
-        "xor ebx, ebx\n" //total
-
-        "1:\n"
-        "mov rax, [%q[buffer]+r12*8]\n" //buffer[i]
-        "cmp rax, 0\n"           // != NULL
-        "je 2f\n"
-
-        "mov rdi, rax\n"         //rdi -> buffer[i]
-        "mov rsi, %q[crc32_hash]\n"         //rsi -> crc32_hash
-        "mov rdx, %q[table]\n"         //rdx -> table
-        "call find_in_table\n"   //res -> eax
-
-        "add ebx, eax\n"         //total += res
-        "inc r12d\n"             //i++
-        "jmp 1b\n"
-
-        "2:\n"
-
-        "mov %k[total], ebx\n"    //total from ebx saving
-
-        ".att_syntax prefix\n"
-        : [total] "=r" (total)
-        : [table] "r" (table),
-          [buffer] "r" (buffer),
-          [crc32_hash] "r" (crc32_hash)
-        :"rax", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10", "r11", "rbx", "r12", "memory"
-    );
-    //while (buffer[i] != NULL) {
-    //    total += find_in_table(buffer[i], crc32_hash, table);
-    //    i++;
-    //}
+    int i = 0;
+    while (buffer[i] != NULL) {
+        total += find_in_table(buffer[i], crc32_hash, table);
+        i++;
+    }
     return total;
 }
 
@@ -202,45 +179,6 @@ int main() {
     //printf("lf = %lf\n", get_load_factor(table, table_size));
 
     int total = test_for_finding(table, buffer);
-
-    //total += find_in_table("coal", crc32_hash, table);
-    //total += find_in_table("jopa", crc32_hash, table);
-    //total += find_in_table("a", crc32_hash, table);
-    //total += find_in_table("b", crc32_hash, table);
-    //total += find_in_table("for", crc32_hash, table);
-    //total += find_in_table("hopa", crc32_hash, table);
-    //total += find_in_table("hippo", crc32_hash, table);
-    //total += find_in_table("denis", crc32_hash, table);
-    //total += find_in_table("pork", crc32_hash, table);
-    //total += find_in_table("return", crc32_hash, table);
-    //total += find_in_table("not", crc32_hash, table);
-    //total += find_in_table("wiht", crc32_hash, table);
-    //total += find_in_table("of", crc32_hash, table);
-    //total += find_in_table("at", crc32_hash, table);
-    //total += find_in_table("loh", crc32_hash, table);
-    //total += find_in_table("goga", crc32_hash, table);
-    //total += find_in_table("gym", crc32_hash, table);
-    //total += find_in_table("west", crc32_hash, table);
-    //total += find_in_table("macan", crc32_hash, table);
-    //total += find_in_table("cayenne", crc32_hash, table);
-    //total += find_in_table("beha", crc32_hash, table);
-    //total += find_in_table("merc", crc32_hash, table);
-    //total += find_in_table("sueta", crc32_hash, table);
-    //total += find_in_table("job", crc32_hash, table);
-    //total += find_in_table("labour", crc32_hash, table);
-    //total += find_in_table("gelik", crc32_hash, table);
-    //total += find_in_table("hookah", crc32_hash, table);
-    //total += find_in_table("hop", crc32_hash, table);
-    //total += find_in_table("loop", crc32_hash, table);
-    //total += find_in_table("joke", crc32_hash, table);
-    //total += find_in_table("qwerty", crc32_hash, table);
-    //total += find_in_table("chat", crc32_hash, table);
-    //total += find_in_table("gpt", crc32_hash, table);
-    //total += find_in_table("table", crc32_hash, table);
-    //total += find_in_table("fond", crc32_hash, table);
-    //total += find_in_table("here", crc32_hash, table);
-    //total += find_in_table("door", crc32_hash, table);
-    //total += find_in_table("shark", crc32_hash, table);
 
     printf("%d\n", total);
 

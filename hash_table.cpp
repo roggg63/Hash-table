@@ -54,7 +54,7 @@ uint hash_ror(const char* word) {
 
 uint gnu_hash(const char* word) {
     uint hash = 5381;
-    int c;
+    int c = 0;
     while ((c = *word++)) {
         hash = ((hash << 5) + hash) + c;
     }
@@ -200,7 +200,7 @@ int main() {
     //printf("%p %s\n", buffer, buffer[10]);
 
     for (int i = 0; i < 8; i++) {
-        my_list** table = save_in_table(buffer, funcs[i].func);
+        my_list** table = save_in_table(buffer, funcs[i].function);
 
         get_info(table, funcs[i].name);
     }

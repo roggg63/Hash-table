@@ -21,16 +21,27 @@ uint rol(uint value);
 
 //uint (*funcs[8])(const char* word) = { hash_ascii_sum, hash_const_1, hash_first_ascii, hash_len, hash_rol, hash_ror, gnu_hash, crc32_hash};
 
+#define HASH_FUNC(func) {.function = func, .name = #func}
+
 struct functions {
-    uint (*func)(const char* word);
+    uint (*function)(const char* word);
     const char* name;
 };
 
-functions funcs[] = {{.func = hash_ascii_sum,   .name = "hash_ascii_sum"},
-                     {.func = hash_const_1,     .name = "hash_const_1"},
-                     {.func = hash_first_ascii, .name = "hash_first_ascii"},
-                     {.func = hash_len,         .name = "hash_len"},
-                     {.func = hash_rol,         .name = "hash_rol"},
-                     {.func = hash_ror,         .name = "hash_ror"},
-                     {.func = gnu_hash,         .name = "gnu_hash"},
-                     {.func = crc32_hash,       .name = "crc32_hash"}};
+functions funcs[] = {HASH_FUNC(hash_ascii_sum),
+                     HASH_FUNC(hash_const_1),
+                     HASH_FUNC(hash_first_ascii),
+                     HASH_FUNC(hash_len),
+                     HASH_FUNC(hash_rol),
+                     HASH_FUNC(hash_ror),
+                     HASH_FUNC(gnu_hash),
+                     HASH_FUNC(crc32_hash)};
+
+//functions funcs[] = {{.function = hash_ascii_sum,   .name = "hash_ascii_sum"},
+//                     {.function = hash_const_1,     .name = "hash_const_1"},
+//                     {.function = hash_first_ascii, .name = "hash_first_ascii"},
+//                     {.function = hash_len,         .name = "hash_len"},
+//                     {.function = hash_rol,         .name = "hash_rol"},
+//                     {.function = hash_ror,         .name = "hash_ror"},
+//                     {.function = gnu_hash,         .name = "gnu_hash"},
+//                     {.function = crc32_hash,       .name = "crc32_hash"}};
