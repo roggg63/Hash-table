@@ -138,23 +138,23 @@ int test_for_finding(my_list** table, char** buffer) {
         //"mov  r14, ;"
         //"mov  r15, %[crc32_hash];"
 
-        ".Lcontinue:"
-        "mov rax, [%[buffer]+r12*8];" //buffer[i]
+        "1:"
+        "mov rax, [%q[buffer]+r12*8];" //buffer[i]
         "cmp rax, 0;"           // != NULL
-        "je .Lend"
+        "je 2f"
 
         "mov rdi, rax;"         //rdi -> buffer[i]
-        "mov rsi, %[crc32_hash];"         //rsi -> crc32_hash
-        "mov rdx, %[table];"         //rdx -> table
+        "mov rsi, %q[crc32_hash];"         //rsi -> crc32_hash
+        "mov rdx, %q[table];"         //rdx -> table
         "call find_in_table;"   //res -> eax
 
         "add ebx, eax;"         //total += res
         "inc r12d;"             //i++
-        "jmp .Lcontinue;"
+        "jmp 1b"
 
-        ".Lend:"
+        "2:"
 
-        "mov %[total], ebx;"    //total from ebx saving
+        "mov %k[total], ebx;"    //total from ebx saving
 
         ".att_syntax prefix;"
         : [total] "=r" (total)
