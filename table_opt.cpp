@@ -103,13 +103,15 @@ void table_dtor(my_list** table,  char** buffer) {
     free(buffer);
 }
 
-extern "C" int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_list** table) {
-    uint hash = (uint) (hash_func(word) % table_size);
+extern "C" int find_in_table(const char* word, my_list** table) {
+    uint32_t hash = 0xFFFFFFFF;
+    while (*word) {
+        hash = _mm_crc32_u32(hash, *word);
+        word += 8;
+    }
+    hash = hash % table_size;
 
     my_list* list = table[hash];
-
-    //alignas(8) char word32[32] = {};
-    //make_32byte_word(word32, word);
 
     if (list == NULL) {
         //printf("no in table\n");
@@ -140,8 +142,7 @@ int test_for_finding(my_list** table, char** buffer) {
         "je 2f\n"
 
         "mov rdi, rax\n"         //rdi -> buffer[i]
-        "mov rsi, %q[crc32_hash]\n"         //rsi -> crc32_hash
-        "mov rdx, %q[table]\n"         //rdx -> table
+        "mov rsi, %q[table]\n"         //rdx -> table
         "call find_in_table\n"   //res -> eax
 
         "add ebx, eax\n"         //total += res
@@ -159,10 +160,7 @@ int test_for_finding(my_list** table, char** buffer) {
           [crc32_hash] "r" (crc32_hash)
         :"rax", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10", "r11", "rbx", "r12", "memory"
     );
-    //while (buffer[i] != NULL) {
-    //    total += find_in_table(buffer[i], crc32_hash, table);
-    //    i++;
-    //}
+
     return total;
 }
 
