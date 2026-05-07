@@ -129,34 +129,34 @@ int find_in_table(const char* word, uint32_t(*hash_func)(const char* word), my_l
 int test_for_finding(my_list** table, char** buffer) {
     int total = 0;
     asm volatile (
-        ".intel_syntax noprefix;"
+        ".intel_syntax noprefix\n"
 
-        "xor  r12d, r12d;" //i
-        "xor ebx, ebx;" //total
+        "xor  r12d, r12d\n" //i
+        "xor ebx, ebx\n" //total
 
         //"mov  r13, ;"
         //"mov  r14, ;"
         //"mov  r15, %[crc32_hash];"
 
-        "1:"
-        "mov rax, [%q[buffer]+r12*8];" //buffer[i]
-        "cmp rax, 0;"           // != NULL
-        "je 2f"
+        "1:\n"
+        "mov rax, [%q[buffer]+r12*8]\n" //buffer[i]
+        "cmp rax, 0\n"           // != NULL
+        "je 2f\n"
 
-        "mov rdi, rax;"         //rdi -> buffer[i]
-        "mov rsi, %q[crc32_hash];"         //rsi -> crc32_hash
-        "mov rdx, %q[table];"         //rdx -> table
-        "call find_in_table;"   //res -> eax
+        "mov rdi, rax\n"         //rdi -> buffer[i]
+        "mov rsi, %q[crc32_hash]\n"         //rsi -> crc32_hash
+        "mov rdx, %q[table]\n"         //rdx -> table
+        "call find_in_table\n"   //res -> eax
 
-        "add ebx, eax;"         //total += res
-        "inc r12d;"             //i++
-        "jmp 1b"
+        "add ebx, eax\n"         //total += res
+        "inc r12d\n"             //i++
+        "jmp 1b\n"
 
-        "2:"
+        "2:\n"
 
-        "mov %k[total], ebx;"    //total from ebx saving
+        "mov %k[total], ebx\n"    //total from ebx saving
 
-        ".att_syntax prefix;"
+        ".att_syntax prefix\n"
         : [total] "=r" (total)
         : [table] "r" (table),
           [buffer] "r" (buffer),
