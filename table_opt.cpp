@@ -244,7 +244,7 @@ int main() {
 
     printf("%d\n", total);
 
-    //table_dtor(table, buffer);
+    table_dtor(table, buffer);
 
     return 0;
 }
