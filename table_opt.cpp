@@ -173,7 +173,7 @@ int test_for_finding(my_list** table, char** buffer) {
         : [table] "r" (table),
           [buffer] "r" (buffer),
           [crc32_hash] "r" (crc32_hash)
-        :"rax", "rdi", "rsi", "rdx", "memory", "rcx"
+        :"rdi", "rsi", "rdx", "memory", "rcx"
     );
     //while (buffer[i] != NULL) {
     //    total += find_in_table(buffer[i], crc32_hash, table);
