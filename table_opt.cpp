@@ -105,8 +105,8 @@ void table_dtor(my_list** table,  char** buffer) {
 
 extern "C" int find_in_table(const char* word, my_list** table) {
     uint32_t hash = 0xFFFFFFFF;
-    while (*word) {
-        hash = _mm_crc32_u32(hash, *word);
+    for (int j = 0; j < 4; j++) {
+        hash = _mm_crc32_u64(hash, *word);
         word += 8;
     }
     hash = hash % table_size;
